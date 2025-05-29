@@ -81,7 +81,10 @@
     <h2>Log New SOP Failure</h2>
     <form method="POST" enctype="multipart/form-data">
       <label>Order Number:</label>
-      <input type="text" name="order_number" placeholder="BAR-SO0XXX" required>
+      <div style="display: flex; align-items: center; gap: 0.3rem;">
+        <span style="font-weight:600;">BAR-SO0</span>
+        <input type="text" name="order_number_suffix" placeholder="XXX" required style="flex:1;" pattern="\w+">
+      </div>
 
       <label>Customer Name:</label>
       <input type="text" name="customer_name" required>
