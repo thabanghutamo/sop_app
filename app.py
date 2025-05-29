@@ -270,7 +270,13 @@ def sop_tiles():
         "Scheduling SOP",
         "Production stock to unpacking SOP"
     ]
-    return render_template('sop_tiles.html', sop_titles=sop_titles)
+    sop_counts = {
+        "Delayed unpacking SOP": 5,
+        "Double Checking SOP": 3,
+        "Scheduling SOP": 8,
+        "Production stock to unpacking SOP": 2
+    }
+    return render_template('sop_tiles.html', sop_titles=sop_titles, sop_counts=sop_counts)
 
 if __name__ == '__main__':
     app.run(debug=True)
