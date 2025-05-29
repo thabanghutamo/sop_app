@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>New SOP Failure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 420px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 1.2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 2rem 1.2rem 1.5rem 1.2rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem 0;
+      color: #2d3a4a;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 1.1rem;
+      font-weight: 500;
+      color: #3b4a5a;
+    }
+    select, input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.4rem;
+      border: 1px solid #e1eafc;
+      border-radius: 0.5rem;
+      background: #f3f6fa;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: #3b6cb7;
+      outline: none;
+      background: #e7eef7;
+    }
+    button[type="submit"] {
+      width: 100%;
+      background: linear-gradient(90deg, #3b6cb7 0%, #5a9cfb 100%);
+      color: #fff;
+      border: none;
+      border-radius: 0.7rem;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: background 0.18s;
+    }
+    button[type="submit"]:hover {
+      background: linear-gradient(90deg, #2d4a7a 0%, #3b6cb7 100%);
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 0.5rem;
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Log New SOP Failure</h2>
+    <form method="POST" enctype="multipart/form-data">
+      <label>Order Number:</label>
+      <input type="text" name="order_number" placeholder="BAR-SO0XXX" required>
+
+      <label>Customer Name:</label>
+      <input type="text" name="customer_name" required>
+
+      <label>Manager Responsible:</label>
+      <select name="manager" id="managerSelect" required onchange="updateSopFailed()">
+        <option value="">Select Manager</option>
+        <option>Planning</option>
+        <option>Embroidery</option>
+        <option>Alterations</option>
+        <option>Gifting</option>
+        <option>Sublimation</option>
+        <option>Display</option>
+        <option>Warehouse</option>
+        <option>Scheduling</option>
+        <option>Production</option>
+      </select>
+
+      <label>SOP Failed:</label>
+      <select name="sop_failed" id="sopFailedSelect" required onchange="updateSopAction()">
+        <option value="">Select SOP Failed</option>
+      </select>
+
+      <label>SOP Action Failed:</label>
+      <select name="sop_action" id="sopActionSelect" required>
+        <option value="">Select SOP Action</option>
+      </select>
+
+      <label>Person Responsible:</label>
+      <input type="text" name="person" required>
+
+      <label>Details:</label>
+      <textarea name="details" rows="3"></textarea>
+
+      <label>Image of Failure:</label>
+      <input type="file" name="image">
+
+      <button type="submit">Submit</button>
+    </form>
+    <a href="{{ url_for('dashboard') }}" style="display:block;text-align:center;margin-top:1.5rem;color:#3b6cb7;text-decoration:none;font-weight:600;border-radius:0.5rem;padding:0.7rem 1.2rem;background:#e1eafc;transition:background 0.18s;">
+      Back to Dashboard
+    </a>
+  </div>
+  <script>
+const sopMap = {
+  "Delayed unpacking SOP": [
+    "Communication of delayed order not sent",
+    "Order not scheduled as per delayed communication",
+    "Delayed communication not met and no new communication sent"
+  ],
+  "Double Checking SOP": [
+    "Order sent after cut off not reported as late order",
+    "Order not sent to double checking",
+    "Boxes not sealed correctly",
+    "Qty of boxes not written on Job card",
+    "Qty packed not written on all boxes",
+    "Order Not reported as finished by production",
+    "Order sent to double check with shortages not communicated"
+  ],
+  "Scheduling SOP": [
+    "Orders moved with no communication to planning or system notes",
+    "Order missed with no communication to planning",
+    "Long runs not produced as planned or communicated to planning",
+    "Notes on scheduling tool not updated",
+    "Long run qty produced not updated on scheduling tool",
+    "Statuses in D365 not updated causing miscommunication",
+    "Planner overscheduled with no communication and agreement",
+    "Planner pushed in order with no communication and agreement",
+    "Planner scheduled order for incorrect date",
+    "Planner planned order incorrectly"
+  ],
+  "Production stock to unpacking SOP": [
+    "Stock received is short",
+    "Stock received has quality issues",
+    "Stock received is the wrong size/product or colour",
+    "Stock received has colour mixes",
+    "Planner did not modify the order"
+  ]
+};
+
+function updateSopFailed() {
+  const sopFailedSelect = document.getElementById('sopFailedSelect');
+  const sopActionSelect = document.getElementById('sopActionSelect');
+  sopFailedSelect.innerHTML = '<option value="">Select SOP Failed</option>';
+  sopActionSelect.innerHTML = '<option value="">Select SOP Action</option>';
+
+  Object.keys(sopMap).forEach(sop => {
+    const option = document.createElement('option');
+    option.value = sop;
+    option.textContent = sop;
+    sopFailedSelect.appendChild(option);
+  });
+}
+
+function updateSopAction() {
+  const sop = document.getElementById('sopFailedSelect').value;
+  const sopActionSelect = document.getElementById('sopActionSelect');
+  sopActionSelect.innerHTML = '<option value="">Select SOP Action</option>';
+  if (sop && sopMap[sop]) {
+    sopMap[sop].forEach(action => {
+      const option = document.createElement('option');
+      option.value = action;
+      option.textContent = action;
+      sopActionSelect.appendChild(option);
+    });
+  }
+}
+  </script>
+</body>
+</html>

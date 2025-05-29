@@ -1,0 +1,31 @@
+<!-- filepath: c:\Users\john\Desktop\projects\barron\sop_app\templates\sop_tiles.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SOP Tiles</title>
+    <style>
+        .tile-grid { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-top: 3rem; }
+        .sop-tile {
+            background: #3b6cb7;
+            color: #fff;
+            border-radius: 1rem;
+            padding: 2rem 3rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .sop-tile:hover { background: #2d4a7a; }
+    </style>
+</head>
+<body>
+    <div class="tile-grid">
+        {% for sop in sop_titles %}
+            <a class="sop-tile" href="{{ url_for('view_sops', sop=sop) }}">{{ sop }}</a>
+        {% endfor %}
+    </div>
+</body>
+</html>

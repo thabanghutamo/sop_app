@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard - SOP App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 420px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 2rem 1.2rem 1.5rem 1.2rem;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e3e6ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            color: #4a5a7a;
+            font-weight: bold;
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            color: #2d3a4a;
+        }
+        .role {
+            font-size: 0.95rem;
+            color: #6c7a89;
+            margin-top: 0.2rem;
+        }
+        .card-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.1rem;
+            margin-top: 2rem;
+        }
+        .card-link {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f3f6fa;
+            border-radius: 0.7rem;
+            padding: 1.1rem 1rem;
+            text-decoration: none;
+            color: #2d3a4a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: background 0.18s;
+            aspect-ratio: 1/1;
+        }
+        .card-link:hover {
+            background: #e7eef7;
+        }
+        .card-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 0.5rem;
+            background: #e1eafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #3b6cb7;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 0.5rem;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .card-list {
+                grid-template-columns: repeat(2, 1fr); /* Show 2 per row on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="avatar">{{ username[0]|upper }}</div>
+            <div>
+                <h2>Welcome, {{ username }}</h2>
+                <div class="role">{{ role|capitalize }}</div>
+            </div>
+            <div style="margin-left:auto; position:relative;">
+                <span style="position:absolute; top:-10px; right:-10px; background:#3b6cb7; color:#fff; font-weight:600; border-radius:1.2rem; padding:0.4rem 1rem; font-size:1.1rem; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    {{ daily_sop_count }}
+                </span>
+            </div>
+        </div>
+        <div class="card-list">
+            <a href="{{ url_for('new_sop') }}" class="card-link">
+                <div class="card-icon">➕</div>
+                <div class="card-title">Submit New SOP Failure</div>
+            </a>
+            <a href="{{ url_for('view_sops') }}" class="card-link">
+                <div class="card-icon">📋</div>
+                <div class="card-title">View SOP Failures</div>
+            </a>
+            <a href="{{ url_for('logout') }}" class="card-link">
+                <div class="card-icon">🚪</div>
+                <div class="card-title">Logout</div>
+            </a>
+        </div>
+        <a href="{{ url_for('ai_analysis') }}" style="display:block; margin:2rem auto 0 auto; max-width:260px; text-align:center; padding: 10px; background: purple; color: white; text-decoration: none; border-radius:0.7rem; font-weight:600;">
+            AI: Repeat SOP Analysis
+        </a>
+    </div>
+</body>
+</html>

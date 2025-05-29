@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Edit SOP Failure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* Use similar styles as your other forms */
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); margin: 0; padding: 0; min-height: 100vh; }
+    .container { max-width: 420px; margin: 2rem auto; background: #fff; border-radius: 1.2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.10); padding: 2rem 1.2rem 1.5rem 1.2rem; }
+    h2 { font-size: 1.3rem; font-weight: 600; margin: 0 0 1.5rem 0; color: #2d3a4a; text-align: center; }
+    label { display: block; margin-top: 1.1rem; font-weight: 500; color: #3b4a5a; }
+    select, input[type="text"], textarea, input[type="file"] { width: 100%; padding: 0.8rem; margin-top: 0.4rem; border: 1px solid #e1eafc; border-radius: 0.5rem; background: #f3f6fa; font-size: 1rem; box-sizing: border-box; transition: border 0.2s; }
+    select:focus, input:focus, textarea:focus { border-color: #3b6cb7; outline: none; background: #e7eef7; }
+    button[type="submit"] { width: 100%; background: linear-gradient(90deg, #3b6cb7 0%, #5a9cfb 100%); color: #fff; border: none; border-radius: 0.7rem; padding: 1rem; font-size: 1.1rem; font-weight: 600; margin-top: 2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: background 0.18s; }
+    button[type="submit"]:hover { background: linear-gradient(90deg, #2d4a7a 0%, #3b6cb7 100%); }
+    .back-link { display: inline-block; margin-top: 1.5rem; color: #3b6cb7; text-decoration: none; font-weight: 600; border-radius: 0.5rem; padding: 0.7rem 1.2rem; background: #e1eafc; transition: background 0.18s; }
+    .back-link:hover { background: #c3d6f2; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Edit SOP Failure</h2>
+    <form method="POST" enctype="multipart/form-data">
+      <label>Order Number:</label>
+      <input type="text" name="order_number" value="{{ sop.order_number }}" required>
+
+      <label>Customer Name:</label>
+      <input type="text" name="customer_name" value="{{ sop.customer_name }}" required>
+
+      <label>Manager Responsible:</label>
+      <select name="manager" id="managerSelect" required onchange="updateSopFailed()">
+        <option value="">Select Manager</option>
+        {% for manager in managers %}
+          <option value="{{ manager }}" {% if sop.manager == manager %}selected{% endif %}>{{ manager }}</option>
+        {% endfor %}
+      </select>
+
+      <label>SOP Failed:</label>
+      <select name="sop_failed" id="sopFailedSelect" required onchange="updateSopAction()">
+        <option value="">Select SOP Failed</option>
+      </select>
+
+      <label>SOP Action Failed:</label>
+      <select name="sop_action" id="sopActionSelect" required>
+        <option value="">Select SOP Action</option>
+      </select>
+
+      <label>Person Responsible:</label>
+      <input type="text" name="person" value="{{ sop.person }}" required>
+
+      <label>Details:</label>
+      <textarea name="details" rows="3">{{ sop.details }}</textarea>
+
+      <label>Image of Failure:</label>
+      <input type="file" name="image">
+
+      <button type="submit">Update</button>
+    </form>
+    <a href="{{ url_for('view_sops') }}" class="back-link">Back to SOPs</a>
+  </div>
+</body>
+</html>
+
+<script>
+const sopMap = {
+  "Planning": {
+    "SOPs": [
+      "Delayed unpacking SOP",
+      "Scheduling SOP",
+      "Production stock to unpacking SOP"
+    ],
+    "Actions": {
+      "Delayed unpacking SOP": ["Communication of delayed order not sent"],
+      "Scheduling SOP": [
+        "Orders moved with no communication to planning or system notes",
+        "Order missed with no communication to planning",
+        "Long runs not produced as planned or communicated to planning",
+        "Notes on scheduling tool not updated",
+        "Long run qty produced not updated on scheduling tool",
+        "Statuses in D365 not updated causing miscommunication",
+        "Planner overscheduled with no communication and agreement",
+        "Planner pushed in order with no communication and agreement",
+        "Planner scheduled order for incorrect date",
+        "Planner planned order incorrectly"
+      ],
+      "Production stock to unpacking SOP": [
+        "Stock received is short",
+        "Stock received has quality issues",
+        "Stock received is the wrong size/product or colour",
+        "Stock received has colour mixes",
+        "Planner did not modify the order"
+      ]
+    }
+  },
+  "Embroidery": {
+    "SOPs": ["Order not scheduled as per delayed communication"],
+    "Actions": { "Order not scheduled as per delayed communication": [] }
+  },
+  "Gifting": {
+    "SOPs": ["Double Checking SOP"],
+    "Actions": {
+      "Double Checking SOP": [
+        "Order sent after cut off not reported as late order"
+      ]
+    }
+  },
+  "Sublimation": {
+    "SOPs": ["Order not sent to double checking"],
+    "Actions": {
+      "Order not sent to double checking": []
+    }
+  },
+  "Display": {
+    "SOPs": ["Boxes not sealed correctly"],
+    "Actions": { "Boxes not sealed correctly": [] }
+  },
+  "Warehouse": {
+    "SOPs": ["Qty of boxes not written on Job card", "Qty packed not written on all boxes"],
+    "Actions": {
+      "Qty of boxes not written on Job card": [],
+      "Qty packed not written on all boxes": []
+    }
+  },
+  "Scheduling": {
+    "SOPs": ["Scheduling SOP"],
+    "Actions": {
+      "Scheduling SOP": [
+        "Orders moved with no communication to planning or system notes",
+        "Order missed with no communication to planning"
+      ]
+    }
+  },
+  "Production": {
+    "SOPs": [
+      "Order Not reported as finished by production",
+      "Order sent to double check with shortages not communicated"
+    ],
+    "Actions": {
+      "Order Not reported as finished by production": [],
+      "Order sent to double check with shortages not communicated": []
+    }
+  }
+};
+
+function updateSopFailed() {
+  const manager = document.getElementById('managerSelect').value;
+  const sopFailedSelect = document.getElementById('sopFailedSelect');
+  const sopActionSelect = document.getElementById('sopActionSelect');
+  sopFailedSelect.innerHTML = '<option value="">Select SOP Failed</option>';
+  sopActionSelect.innerHTML = '<option value="">Select SOP Action</option>';
+  if (manager && sopMap[manager]) {
+    sopMap[manager].SOPs.forEach(sop => {
+      sopFailedSelect.innerHTML += `<option value="${sop}">${sop}</option>`;
+    });
+  }
+  // If editing, set the value to the current one
+  {% if sop.sop_failed %}
+    setTimeout(function() {
+      sopFailedSelect.value = {{ sop.sop_failed|tojson }};
+      updateSopAction();
+    }, 0);
+  {% endif %}
+}
+
+function updateSopAction() {
+  const manager = document.getElementById('managerSelect').value;
+  const sopFailed = document.getElementById('sopFailedSelect').value;
+  const sopActionSelect = document.getElementById('sopActionSelect');
+  sopActionSelect.innerHTML = '<option value="">Select SOP Action</option>';
+  if (manager && sopFailed && sopMap[manager] && sopMap[manager].Actions[sopFailed]) {
+    sopMap[manager].Actions[sopFailed].forEach(action => {
+      sopActionSelect.innerHTML += `<option value="${action}">${action}</option>`;
+    });
+  }
+  // If editing, set the value to the current one
+  {% if sop.sop_action %}
+    setTimeout(function() {
+      sopActionSelect.value = {{ sop.sop_action|tojson }};
+    }, 0);
+  {% endif %}
+}
+
+// Initialize dropdowns on page load
+window.onload = function() {
+  updateSopFailed();
+};
+</script>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login - SOP App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 350px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 2rem 1.2rem 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0 0 1.5rem 0;
+            color: #2d3a4a;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 1.1rem;
+            font-weight: 500;
+            color: #3b4a5a;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 0.4rem;
+            border: 1px solid #e1eafc;
+            border-radius: 0.5rem;
+            background: #f3f6fa;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border 0.2s;
+        }
+        input:focus {
+            border-color: #3b6cb7;
+            outline: none;
+            background: #e7eef7;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(90deg, #3b6cb7 0%, #5a9cfb 100%);
+            color: #fff;
+            border: none;
+            border-radius: 0.7rem;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: background 0.18s;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(90deg, #2d4a7a 0%, #3b6cb7 100%);
+        }
+        .flash-messages {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.7rem 1rem;
+            background: #ffeaea;
+            color: #b73b3b;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            text-align: center;
+            list-style: none;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 0.5rem;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form method="POST" style="width:100%;">
+            <label>Username:</label>
+            <input type="text" name="username" required>
+            <label>Password:</label>
+            <input type="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flash-messages">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

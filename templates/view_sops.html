@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SOP Failures</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 2rem 1.2rem 1.5rem 1.2rem;
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0 0 1.5rem 0;
+            color: #2d3a4a;
+            text-align: center;
+        }
+        .export-btn {
+            display: inline-block;
+            padding: 0.7rem 1.2rem;
+            background: linear-gradient(90deg, #3bb76c 0%, #5afba0 100%);
+            color: #fff;
+            border-radius: 0.7rem;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: background 0.18s;
+            border: none;
+        }
+        .export-btn:hover {
+            background: linear-gradient(90deg, #2d7a4a 0%, #3bb76c 100%);
+        }
+        .sop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        .sop-block {
+            aspect-ratio: 1 / 1; /* Makes blocks square */
+            overflow-y: auto;
+            background: #f3f6fa;
+            border-radius: 0.9rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 1.2rem 1rem 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: background 0.18s, box-shadow 0.18s;
+            border: 2px solid transparent;
+            min-height: 220px;
+            position: relative;
+        }
+        .sop-block:hover {
+            background: #e7eef7;
+            box-shadow: 0 4px 16px rgba(59,108,183,0.10);
+            border-color: #3b6cb7;
+        }
+        .sop-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #3b6cb7;
+            margin-bottom: 0.6rem;
+        }
+        .sop-field {
+            font-size: 0.97rem;
+            color: #2d3a4a;
+            margin-bottom: 0.3rem;
+            word-break: break-word;
+        }
+        .sop-label {
+            font-weight: 500;
+            color: #6c7a89;
+        }
+        .sop-img {
+            max-width: 100%;
+            max-height: 70px;
+            border-radius: 0.4rem;
+            margin-top: 0.7rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            background: #fff;
+        }
+        .edit-link {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: #3b6cb7;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 0.4rem;
+            padding: 0.3rem 0.7rem;
+            background: #e1eafc;
+            transition: background 0.18s;
+            z-index: 2;
+        }
+        .edit-link:hover {
+            background: #c3d6f2;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #3b6cb7;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            background: #e1eafc;
+            transition: background 0.18s;
+        }
+        .back-link:hover {
+            background: #c3d6f2;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 0.5rem;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+            .sop-block {
+                min-height: 180px;
+                padding: 1rem 0.7rem 0.7rem 0.7rem;
+            }
+        }
+    </style>
+    <script>
+        function goToEdit(id) {
+            window.location.href = "/edit_sop/" + id;
+        }
+        function showImageModal(src) {
+            var modal = document.getElementById('imgModal');
+            var img = document.getElementById('modalImg');
+            img.src = src;
+            modal.style.display = 'flex';
+        }
+        function closeImageModal() {
+            document.getElementById('imgModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            var modal = document.getElementById('imgModal');
+            if (event.target === modal) {
+                closeImageModal();
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% if sop_filter %}
+            <h2>Previous SOP Failures: {{ sop_filter }}</h2>
+        {% else %}
+            <h2>Previous SOP Failures</h2>
+        {% endif %}
+        <a href="{{ url_for('export_excel') }}" class="export-btn">Export to Excel</a>
+        <div class="sop-grid">
+            {% for row in failures %}
+            <div class="sop-block" 
+                 title="Click to edit or view details"
+                 onclick="if(event.target === this) goToEdit({{ row[0] }});">
+                <a href="{{ url_for('edit_sop', id=row[0]) }}" class="edit-link">Edit</a>
+                <div class="sop-title">{{ row[1] }} - {{ row[2] }}</div>
+                <div class="sop-field"><span class="sop-label">Manager:</span> {{ row[3] }}</div>
+                <div class="sop-field"><span class="sop-label">Person:</span> {{ row[4] }}</div>
+                <div class="sop-field"><span class="sop-label">SOP Failed:</span> {{ row[5] }}</div>
+                <div class="sop-field"><span class="sop-label">Action Failed:</span> {{ row[6] }}</div>
+                <div class="sop-field"><span class="sop-label">Details:</span> {{ row[7] }}</div>
+                {% if row[8] %}
+                <button type="button"
+                    onclick="event.stopPropagation(); showImageModal('{{ url_for('static', filename='upload/' ~ row[8]) }}');"
+                    style="margin:0.5rem 0 0.5rem 0; padding:0.5rem 1rem; border-radius:0.5rem; border:none; background:#3b6cb7; color:#fff; font-weight:600; cursor:pointer;">
+                    Preview Image
+                </button>
+                {% endif %}
+                <form method="POST" action="{{ url_for('delete_sop', id=row[0]) }}" style="margin-top:0.5rem;" 
+                      onsubmit="event.stopPropagation();return confirm('Are you sure you want to delete this SOP?');">
+                    <button type="submit" style="background:#e74c3c;color:#fff;border:none;border-radius:0.4rem;padding:0.3rem 0.7rem;font-weight:500;cursor:pointer;">
+                        Delete
+                    </button>
+                </form>
+                <div class="sop-field"><span class="sop-label">Date:</span> {{ row[9] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="back-link">Back to Dashboard</a>
+        <a href="{{ url_for('ai_analysis') }}" style="display:block; margin:2rem auto 0 auto; max-width:260px; text-align:center; padding: 10px; background: purple; color: white; text-decoration: none; border-radius:0.7rem; font-weight:600;">
+            AI: Repeat SOP Analysis
+        </a>
+    </div>
+
+    <!-- Modal HTML (place this just before </body>) -->
+    <div id="imgModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+        <span onclick="closeImageModal()" style="position:absolute;top:30px;right:40px;font-size:2.5rem;color:#fff;cursor:pointer;font-weight:bold;">&times;</span>
+        <img id="modalImg" src="" alt="Preview" style="max-width:90vw;max-height:80vh;display:block;margin:auto;border-radius:1rem;box-shadow:0 4px 24px rgba(0,0,0,0.25);background:#fff;">
+    </div>
+</body>
+</html>

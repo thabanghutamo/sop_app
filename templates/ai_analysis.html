@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI SOP Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 520px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 2rem 1.2rem 1.5rem 1.2rem;
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0 0 1.5rem 0;
+            color: #2d3a4a;
+            text-align: center;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #3b6cb7;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            background: #e1eafc;
+            transition: background 0.18s;
+        }
+        .back-link:hover {
+            background: #c3d6f2;
+        }
+        .ai-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 0.7rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>AI Analysis - Repeat SOP Failures</h2>
+        <img src="{{ url_for('static', filename=graph) }}" class="ai-img" alt="AI Analysis Graph">
+        <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>
